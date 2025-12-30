@@ -23,7 +23,7 @@ export const analyzeModelPalette = async (modelFile: File): Promise<AnalysisResu
     const base64Data = await fileToGenerativePart(modelFile);
 
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.5-flash-lite-latest",
       contents: {
         parts: [
           { inlineData: { mimeType: modelFile.type, data: base64Data } },
