@@ -2,10 +2,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult } from "../types";
 
-// Initialize Gemini
-// Note: In a production app, the key should be handled via backend proxy.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 const fileToGenerativePart = async (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -20,11 +16,14 @@ const fileToGenerativePart = async (file: File): Promise<string> => {
 };
 
 export const analyzeModelPalette = async (modelFile: File): Promise<AnalysisResult> => {
+  // Create a new instance right before the call to ensure it uses the current process.env.API_KEY
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
   try {
     const base64Data = await fileToGenerativePart(modelFile);
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3-flash-preview",
       contents: {
         parts: [
           { inlineData: { mimeType: modelFile.type, data: base64Data } },
