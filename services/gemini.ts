@@ -16,14 +16,14 @@ const fileToGenerativePart = async (file: File): Promise<string> => {
 };
 
 export const analyzeModelPalette = async (modelFile: File): Promise<AnalysisResult> => {
-  // Create a new instance right before the call to ensure it uses the current process.env.API_KEY
+  // Always create a fresh instance to ensure the latest process.env.API_KEY is used
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   try {
     const base64Data = await fileToGenerativePart(modelFile);
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-lite-latest",
+      model: "gemini-flash-lite-latest",
       contents: {
         parts: [
           { inlineData: { mimeType: modelFile.type, data: base64Data } },
@@ -55,11 +55,13 @@ export const analyzeModelPalette = async (modelFile: File): Promise<AnalysisResu
     });
 
     const text = response.text;
-    if (!text) throw new Error("No response from Gemini");
+    if (!text) throw new Error("The model returned an empty response.");
     
     return JSON.parse(text) as AnalysisResult;
-  } catch (error) {
-    console.error("Gemini Analysis Error:", error);
-    throw error;
+  } catch (error: any) {
+    console.error("Gemini Analysis Error Details:", error);
+    // Extract meaningful error message if available
+    const errorMessage = error?.message || "An unknown error occurred during AI analysis.";
+    throw new Error(errorMessage);
   }
 };

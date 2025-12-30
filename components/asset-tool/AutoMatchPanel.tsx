@@ -29,7 +29,8 @@ const AutoMatchPanel: React.FC<AutoMatchPanelProps> = ({ adjustments, setAdjustm
       setAnalysis(result);
     } catch (err: any) {
       console.error(err);
-      setError("Analysis failed. Please ensure your API_KEY is set in your Vercel Project Settings.");
+      // Display the actual error message from the service
+      setError(err.message || "Analysis failed. Please check your network and API configuration.");
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +93,8 @@ const AutoMatchPanel: React.FC<AutoMatchPanelProps> = ({ adjustments, setAdjustm
                 )}
             </div>
             {error && (
-                <div className="text-tiger-red text-[10px] font-mono p-3 border border-tiger-red bg-tiger-red/10 leading-tight">
+                <div className="text-tiger-red text-[10px] font-mono p-3 border border-tiger-red bg-tiger-red/10 leading-tight break-words">
+                    <div className="font-bold mb-1">ANALYSIS ERROR:</div>
                     {error}
                 </div>
             )}
